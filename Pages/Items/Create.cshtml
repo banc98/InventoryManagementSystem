@@ -1,0 +1,39 @@
+@page
+@model InvApp.Pages.Items.CreateModel
+@{
+    ViewData["Title"] = "New Item";
+}
+<h2 class="mt-3">New Item</h2>
+
+<form method="post" class="mt-3">
+  <div class="mb-3">
+    <label class="form-label">SKU</label>
+    <input asp-for="Input.Sku" class="form-control" />
+    <span asp-validation-for="Input.Sku" class="text-danger"></span>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Name</label>
+    <input asp-for="Input.Name" class="form-control" />
+    <span asp-validation-for="Input.Name" class="text-danger"></span>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Category</label>
+    <select asp-for="Input.CategoryId" asp-items="Model.CategoryOptions" class="form-select"></select>
+  </div>
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <label class="form-label">Reorder Level</label>
+      <input asp-for="Input.ReorderLevel" class="form-control" type="number" />
+    </div>
+    <div class="col-md-4 mb-3 form-check mt-4">
+      <input asp-for="Input.IsActive" class="form-check-input" />
+      <label class="form-check-label" for="Input_IsActive">Active</label>
+    </div>
+  </div>
+  <div class="d-flex gap-2">
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a asp-page="Index" class="btn btn-outline-secondary">Cancel</a>
+  </div>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

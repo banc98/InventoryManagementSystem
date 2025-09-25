@@ -1,0 +1,15 @@
+@page "{id}"
+@model InvApp.Areas.Admin.Pages.Users.DeleteModel
+@{
+    ViewData["Title"] = "Delete User";
+}
+<h2 class="mt-3">Delete User</h2>
+
+<div class="alert alert-warning">
+  Are you sure you want to delete <strong>@Model.Email</strong>?
+</div>
+
+<form method="post">
+  <button class="btn btn-danger" type="submit">Delete</button>
+  <a asp-page="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

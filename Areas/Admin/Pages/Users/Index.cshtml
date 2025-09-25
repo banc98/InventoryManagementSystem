@@ -1,0 +1,75 @@
+@page
+@model InvApp.Areas.Admin.Pages.Users.IndexModel
+@{
+    ViewData["Title"] = "User Management";
+}
+<h2 class="mt-3">Users</h2>
+
+<div class="my-3 text-end">
+  <a asp-page="Create" class="btn btn-primary">Add User</a>
+</div>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>User Name</th>
+      <th>Roles</th>
+      <th class="text-end">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  @foreach (var u in Model.Users)
+  {
+    <tr>
+      <td>@u.Email</td>
+      <td>@u.UserName</td>
+      <td>@string.Join(", ", u.Roles)</td>
+      <td class="text-end">
+        <a asp-page="Edit" asp-route-id="@u.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+        <a asp-page="Delete" asp-route-id="@u.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+      </td>
+    </tr>
+  }
+  </tbody>
+</table>
+
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="flashModal" tabindex="-1" aria-labelledby="flashModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header @(TempData["FlashError"] != null ? "bg-danger text-white" : "bg-success text-white")">
+        <h5 class="modal-title" id="flashModalLabel">
+          @(TempData["FlashError"] != null ? "Action blocked" : "Success")
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        @if (TempData["FlashError"] != null)
+        {
+            <div>@TempData["FlashError"]</div>
+        }
+        else if (TempData["FlashSuccess"] != null)
+        {
+            <div>@TempData["FlashSuccess"]</div>
+        }
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+  <script>
+    (function() {
+      var hasMessage = '@(TempData["FlashError"] != null || TempData["FlashSuccess"] != null ? "1" : "0")' === '1';
+      if (hasMessage) {
+        var modal = new bootstrap.Modal(document.getElementById('flashModal'));
+        modal.show();
+      }
+    })();
+  </script>
+}
