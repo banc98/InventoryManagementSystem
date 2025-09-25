@@ -10,10 +10,6 @@ jobs:
   build-test:
     runs-on: windows-latest
 
-    defaults:
-      run:
-        working-directory: .
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,12 +19,32 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Show dotnet info
+        run: dotnet --info
+
+      - name: Cache NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      # Use the project directory explicitly so paths are never wrong
       - name: Restore
-        run: dotnet restore src/InvApp/InvApp.csproj
+        working-directory: src/InvApp
+        run: dotnet restore InvApp.csproj
 
       - name: Build (Release)
-        run: dotnet build src/InvApp/InvApp.csproj -c Release --no-restore
+        working-directory: src/InvApp
+        run: dotnet build InvApp.csproj -c Release --no-restore
 
-      # If you add tests later, point this to your test csproj
+      # If you add tests later, uncomment and point to your test csproj
       # - name: Test
-      #   run: dotnet test tests/InvApp.Tests/InvApp.Tests.csproj -c Release --no-build --verbosity normal
+      #   working-directory: tests/InvApp.Tests
+      #   run: dotnet test InvApp.Tests.csproj -c Release --no-build --verbosity normal
+
+      # Optional: ensure publish succeeds too
+      - name: Publish (sanity)
+        working-directory: src/InvApp
+        run: dotnet publish InvApp.csproj -c Release -o out --no-restore
