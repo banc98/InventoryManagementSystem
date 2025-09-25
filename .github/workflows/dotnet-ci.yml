@@ -30,21 +30,31 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      # Use the project directory explicitly so paths are never wrong
+      # 🔎 Diagnostics so we see your repo layout on the runner
+      - name: List repo contents
+        shell: pwsh
+        run: |
+          Write-Host "== Root =="
+          Get-ChildItem -Force | Format-Table
+          if (Test-Path src) {
+            Write-Host "== src =="
+            Get-ChildItem -Force src | Format-Table
+          }
+          if (Test-Path src\InvApp) {
+            Write-Host "== src\InvApp =="
+            Get-ChildItem -Force src\InvApp | Format-Table
+          }
+
+      # ✅ Use full path to the project file; do NOT rely on working-directory
       - name: Restore
-        working-directory: src/InvApp
-        run: dotnet restore InvApp.csproj
+        run: dotnet restore .\src\InvApp\InvApp.csproj
 
       - name: Build (Release)
-        working-directory: src/InvApp
-        run: dotnet build InvApp.csproj -c Release --no-restore
+        run: dotnet build .\src\InvApp\InvApp.csproj -c Release --no-restore
 
-      # If you add tests later, uncomment and point to your test csproj
+      # If/when you add tests, point this to your test csproj
       # - name: Test
-      #   working-directory: tests/InvApp.Tests
-      #   run: dotnet test InvApp.Tests.csproj -c Release --no-build --verbosity normal
+      #   run: dotnet test .\tests\InvApp.Tests\InvApp.Tests.csproj -c Release --no-build --verbosity normal
 
-      # Optional: ensure publish succeeds too
       - name: Publish (sanity)
-        working-directory: src/InvApp
-        run: dotnet publish InvApp.csproj -c Release -o out --no-restore
+        run: dotnet publish .\src\InvApp\InvApp.csproj -c Release -o .\out --no-restore
